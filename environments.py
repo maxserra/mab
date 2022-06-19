@@ -16,7 +16,6 @@ class MultiArmedBanditEnvironment:
 class AdversarialExp3Environment:
 
     def __init__(self, arm_probs):
-        self.original_arm_probs = arm_probs
         self.arm_probs = arm_probs
 
         self.reward_tracking = [0 for _ in range(len(arm_probs))]
@@ -25,15 +24,13 @@ class AdversarialExp3Environment:
         self.reward_tracking[arm_i] += reward
 
     def _temper_with_arm_probs(self):
-        sorted_probs = np.flip(np.sort(self.original_arm_probs))
+        sorted_probs = np.flip(np.sort(self.arm_probs))
         sorted_arms_by_reward = np.argsort(self.reward_tracking)
 
         j = 0
         for i in sorted_arms_by_reward:
             self.arm_probs[i] = sorted_probs[j]
             j += 1
-
-        print(f"Sorted probs {sorted_probs} | {sorted_arms_by_reward} -> {self.arm_probs}")
 
     def take_action(self, arm_i):
         if arm_i >= 0 and arm_i < len(self.arm_probs):
